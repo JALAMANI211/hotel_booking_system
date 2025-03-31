@@ -26,6 +26,16 @@ class UserViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def booking_stats(self, request):
+        if not request.user.is_superuser and not request.user.is_staff:
+            return Response(
+                {"error": "Only superuser can access this list."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        elif not request.user.is_superuser and request.user.is_staff:
+            return Response(
+                {"error": "Only superuser can access this list."},
+                status=status.HTTP_403_FORBIDDEN
+            )
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
         booking_filter = {}
